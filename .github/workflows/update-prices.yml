@@ -1,0 +1,35 @@
+name: Auto Update Gold Prices
+
+on:
+  schedule:
+    # Chạy mỗi 15 phút từ 7h sáng đến 6h chiều (giờ VN = UTC+7)
+    - cron: '*/15 0-11 * * 1-6'  # 7AM-6PM VN, Mon-Sat
+  workflow_dispatch:  # Cho phép chạy thủ công
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install puppeteer axios cheerio
+        
+      - name: Fetch gold prices with browser
+        run: node fetch-prices.js
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: false
+        
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add prices.js
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🔄 Cập nhật giá vàng - $(TZ='Asia/Ho_Chi_Minh' date '+%d/%m/%Y %H:%M')" && git push)

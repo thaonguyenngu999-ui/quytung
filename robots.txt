@@ -1,0 +1,21 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://giavangquytung.com/sitemap.xml
+
+# Crawl delay (respect server resources)
+Crawl-delay: 1
+
+# Allow important files
+Allow: /index.html
+Allow: /style.css
+Allow: /prices.js
+Allow: /script.js
+Allow: /logo.png
+
+# Disallow unnecessary files
+Disallow: /scraper.js
+Disallow: /package.json
+Disallow: /node_modules/
