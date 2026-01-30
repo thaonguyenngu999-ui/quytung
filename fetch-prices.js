@@ -51,19 +51,16 @@ async function fetchExternalAPI() {
 
         if (json && json.data) {
             console.log('✅ API: Lấy dữ liệu thành công');
-
-            // Hàm chuẩn hóa giá (xử lý số lẻ như 17.8)
             const normalize = (val) => {
                 if (!val) return 0;
                 let num = parseFloat(val);
-                if (num < 100) num = num * 1000; // 17.8 -> 17800
+                if (num < 100) num = num * 1000;
                 return Math.round(num);
             };
 
             for (const item of json.data) {
                 const source = item.source?.toLowerCase();
                 const data = item.data || [];
-
                 if (source.includes('doji')) {
                     data.forEach(p => {
                         const name = p.name?.toLowerCase() || '';
@@ -117,9 +114,6 @@ async function scrapeData() {
     await page.setUserAgent(CONFIG.userAgent);
     await page.setViewport({ width: 1366, height: 768 });
 
-    // ==========================================
-    // 1. LẤY GIÁ KIM TÍN (QUÉT TRỰC TIẾP THEO YÊU CẦU)
-    // ==========================================
     try {
         console.log('📡 Truy cập Kim Tín (Scraper)...');
         await page.goto('https://kimtin.vn/bieu-do-gia-vang', { waitUntil: 'networkidle2', timeout: CONFIG.timeout });
@@ -130,9 +124,6 @@ async function scrapeData() {
 
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
-                // Cấu hình bảng: Thương phẩm | Loại vàng | Hàm lượng | Mua vào | Bán ra
-                // Nhưng có rowspan nên số lượng cell thay đổi
-
                 let typeText = "";
                 let buyIdx = -1;
                 let sellIdx = -1;
@@ -150,7 +141,6 @@ async function scrapeData() {
                 if (buyIdx !== -1) {
                     const buy = parseInt(cells[buyIdx].innerText.replace(/\D/g, ''));
                     const sell = parseInt(cells[sellIdx].innerText.replace(/\D/g, ''));
-
                     if (typeText.includes('NHẪN TRÒN')) {
                         results.nhanTron = { buy, sell };
                     } else if (typeText.includes('VÀNG MIẾNG SJC')) {
@@ -181,18 +171,12 @@ async function scrapeData() {
         console.log('⚠️ Kim Tín: Lỗi Scraper -', e.message);
     }
 
-    // ==========================================
-    // 2. LẤY GIÁ SJC (DỰ PHÒNG NẾU API LỖI)
-    // ==========================================
     if (!currentPrices.sjc.sjc1L.buy) {
         try {
-            console.log('📡 Truy cập SJC (Fallback Scraper)...');
             await page.goto('https://sjc.com.vn/giavang/textContent.php', { waitUntil: 'domcontentloaded' });
-
             const sjcData = await page.evaluate(() => {
                 const prices = { sjc1L: {}, nhan9999: {}, nuTrang: {} };
-                const rows = document.querySelectorAll('tr');
-                rows.forEach(row => {
+                document.querySelectorAll('tr').forEach(row => {
                     const cells = row.querySelectorAll('td');
                     if (cells.length >= 3) {
                         const name = cells[0].innerText.toLowerCase();
@@ -207,26 +191,14 @@ async function scrapeData() {
                 });
                 return prices;
             });
-            if (sjcData.sjc1L.buy) {
-                currentPrices.sjc = { ...currentPrices.sjc, ...sjcData };
-                console.log('✅ SJC: Cập nhật thành công (Scraper)');
-            }
-        } catch (e) { console.log('⚠️ SJC Scraper: Lỗi -', e.message); }
+            if (sjcData.sjc1L.buy) currentPrices.sjc = { ...currentPrices.sjc, ...sjcData };
+        } catch (e) { }
     }
-
     await browser.close();
 }
 
-// ==========================================
-// CẬP NHẬT GIÁ CHO QUÝ TÙNG & KIM TÍN (THEO BIÊN ĐỘ KIM TÍN)
-// ==========================================
 function syncLocalPrices() {
-    // Kim Tín là mốc tiêu chuẩn (Base)
     const kt = currentPrices.kimTin;
-
-    // Hàm áp dụng biên độ (Margin)
-    // Buy = Base - Margin, Sell = Base + Margin
-    // Margin chuyển đổi từ VND (vd 20.000) sang đơn vị của web (chia 1000 -> 20)
     const applyMargin = (base, marginVnd) => {
         const margin = marginVnd / 1000;
         return {
@@ -235,57 +207,35 @@ function syncLocalPrices() {
         };
     };
 
-    // 1. QUÝ TÙNG (Biên độ A: 20.000đ)
     const marginA = 20000;
     currentPrices.quyTung.nhanTronTron = applyMargin(kt.nhanTronTron, marginA);
     currentPrices.quyTung.nhanEpVi = applyMargin(kt.nhanEpVi, marginA);
     currentPrices.quyTung.sjc = applyMargin(kt.sjc, marginA);
     currentPrices.quyTung.trangSuc18K = applyMargin(kt.trangSuc18K, marginA);
 
-    // 2. BTMC & SJC (Biên độ B: 35.000đ)
     const marginB = 35000;
-    // BTMC
     currentPrices.btmc.nhanTron = applyMargin(kt.nhanTronTron, marginB);
     currentPrices.btmc.sjc = applyMargin(kt.sjc, marginB);
-    // SJC
     currentPrices.sjc.sjc1L = applyMargin(kt.sjc, marginB);
     currentPrices.sjc.nhan9999 = applyMargin(kt.nhanTronTron, marginB);
     currentPrices.sjc.nuTrang = applyMargin(kt.trangSuc18K, marginB);
 
-    // 3. DOJI & PNJ (Biên độ C: 50.000đ)
     const marginC = 50000;
-    // DOJI
     currentPrices.doji.hungThinhVuong = applyMargin(kt.sjc, marginC);
     currentPrices.doji.nhanTron = applyMargin(kt.nhanTronTron, marginC);
-    // PNJ
     currentPrices.pnj.sjc = applyMargin(kt.sjc, marginC);
     currentPrices.pnj.nhan24K = applyMargin(kt.nhanTronTron, marginC);
-
-    console.log('🔄 Đã đồng bộ giá toàn bộ website theo biên độ Kim Tín (20k-50k)');
 }
 
 function writePricesFile() {
-    const now = new Date();
-    const vnTime = now.toLocaleString('vi-VN', {
-        timeZone: 'Asia/Ho_Chi_Minh',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const vnTime = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     const pricesContent = `// ==========================================
-// GIÁ VÀNG THÁI NGUYÊN - TỰ ĐỘNG CẬP NHẬT (Browser)
+// GIÁ VÀNG THÁI NGUYÊN - TỰ ĐỘNG CẬP NHẬT
 // Nguồn: BTMC, SJC, DOJI + tham khảo Kim Tín
 // ==========================================
 
-// Thời gian cập nhật giá cuối cùng
 const LAST_UPDATE = "${vnTime}";
-
-// ==========================================
-// GIÁ VÀNG THAM KHẢO - ĐƠN VỊ: 1.000đ/chỉ
-// ==========================================
 
 const GOLD_PRICES = {
     quyTung: {
@@ -380,23 +330,22 @@ function renderPriceTable(id, key) {
     c.innerHTML = '';
     shop.products.forEach((item, index) => {
         const row = document.createElement('tr');
-        row.className = \`price-row\${index === 0 ? ' highlight' : ''}\${item.name.includes('SJC') ? ' sjc-row' : ''}\`;
-        row.innerHTML = \`
-            <td class="product-info">
-                <div class="product-name-main">\${item.name.toUpperCase()}</div>
-                <div class="product-desc">\${item.desc}</div>
-            </td>
-            <td class="purity">
-                <span class="purity-value">\${item.purity}</span>
-                <span class="purity-label">(\${item.purityLabel})</span>
-            </td>
-            <td class="price buy-price">
-                <span class="price-value">\${formatPrice(convertPrice(item.buy, currentUnit))}</span>
-            </td>
-            <td class="price sell-price">
-                <span class="price-value">\${formatPrice(convertPrice(item.sell, currentUnit))}</span>
-            </td>
-        \`;
+        row.className = "price-row " + (index === 0 ? 'highlight' : '') + (item.name.includes('SJC') ? ' sjc-row' : '');
+        row.innerHTML = ' \
+            <td class="product-info"> \
+                <div class="product-name-main">' + item.name.toUpperCase() + '</div> \
+                <div class="product-desc">' + item.desc + '</div> \
+            </td> \
+            <td class="purity"> \
+                <span class="purity-value">' + item.purity + '</span> \
+                <span class="purity-label">(' + item.purityLabel + ')</span> \
+            </td> \
+            <td class="price buy-price"> \
+                <span class="price-value">' + formatPrice(convertPrice(item.buy, currentUnit)) + '</span> \
+            </td> \
+            <td class="price sell-price"> \
+                <span class="price-value">' + formatPrice(convertPrice(item.sell, currentUnit)) + '</span> \
+            </td>';
         c.appendChild(row);
     });
 }
@@ -408,7 +357,7 @@ function renderAllTables() {
 function updateUnitLabels() {
     const config = UNIT_CONFIG[currentUnit];
     const ud = document.getElementById('unitDescription');
-    if (ud) ud.textContent = \`Giá theo \${config.label}\`;
+    if (ud) ud.textContent = "Giá theo " + config.label;
     document.querySelectorAll('.price-table th .unit').forEach(el => el.textContent = config.shortLabel);
 }
 
@@ -435,38 +384,20 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUnitLabels();
     updateLastUpdateTime();
 });
-\`;
-
+`;
     fs.writeFileSync('prices.js', pricesContent, 'utf8');
-    console.log('📝 Đã ghi file prices.js');
 }
 
-// ==========================================
-// MAIN
-// ==========================================
 async function main() {
     console.log('🚀 Bắt đầu lấy giá vàng...');
-    console.log('⏰ Thời gian:', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
-    console.log('');
-
-    // 1. Thử lấy từ API trước (Nhanh & Nhẹ)
     await fetchExternalAPI();
-
-    // 2. Lấy bằng Scraper (Dự phòng & Kim Tín đặc thù)
     await scrapeData();
-
-    // 3. Đồng bộ giá các cửa hàng địa phương
     syncLocalPrices();
-
-    // 4. Ghi file kết quả
     writePricesFile();
-
-    console.log('');
     console.log('✅ Hoàn thành cập nhật giá!');
-    process.exit(0);
 }
 
-main().catch(error => {
-    console.error('❌ Lỗi Fatal:', error);
+main().catch(err => {
+    console.error(err);
     process.exit(1);
 });
