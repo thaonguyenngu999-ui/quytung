@@ -139,8 +139,11 @@ async function scrapeData() {
                 }
 
                 if (buyIdx !== -1) {
-                    const buy = parseInt(cells[buyIdx].innerText.replace(/\D/g, ''));
-                    const sell = parseInt(cells[sellIdx].innerText.replace(/\D/g, ''));
+                    const buyText = cells[buyIdx].innerText;
+                    const sellText = cells[sellIdx].innerText;
+                    const buy = parseInt(buyText.replace(/\D/g, ''));
+                    const sell = parseInt(sellText.replace(/\D/g, ''));
+
                     if (typeText.includes('NHẪN TRÒN')) {
                         results.nhanTron = { buy, sell };
                     } else if (typeText.includes('VÀNG MIẾNG SJC')) {

@@ -1,9 +1,9 @@
-name: Auto Update Gold Prices
+name: Auto Update Gold Prices (Every 5 Mins)
 
 on:
   schedule:
-    # Chạy mỗi 15 phút từ 7h sáng đến 11h đêm (giờ VN = UTC+7)
-    - cron: '0,15,30,45 0-16 * * *'  # 7:00, 7:15... đến 23:45 VN
+    # Chạy mỗi 5 phút từ 7h sáng đến 11h đêm (giờ VN = UTC+7)
+    - cron: '*/5 0-16 * * *' 
   workflow_dispatch:  # Cho phép chạy thủ công
 
 permissions:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Quan trọng để git push không lỗi
+          fetch-depth: 0
         
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,30 +25,29 @@ jobs:
           node-version: '20'
           cache: 'npm'
           
-      - name: Install dependencies
+      - name: Install System Dependencies
         run: |
-          npm install
-          # Cài đặt trình duyệt cho Puppeteer
-          npx puppeteer browsers install chrome
-          # Cài đặt các thư viện cần thiết cho hệ thống (Debian/Ubuntu)
           sudo apt-get update
           sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0 libx11-xcb1 libxcb-dri3-0 libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libxrandr2 libxrender1 libxtst6 libcups2 libdrm2 libxkbcommon0 libasound2
+          
+      - name: Install Node Dependencies
+        run: |
+          npm install
+          npx puppeteer browsers install chrome
         
-      - name: Fetch gold prices
+      - name: Run Scraper
         run: node fetch-prices.js
         
-      - name: Commit and push
+      - name: Commit and Push (Force Update)
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
           git add prices.js
           
-          # Kiểm tra xem có thay đổi thực sự không
-          if [ -n "$(git status --porcelain)" ]; then
-            git commit -m "🔄 Cập nhật giá vàng tự động [Skip CI] - $(TZ='Asia/Ho_Chi_Minh' date '+%d/%m/%Y %H:%M')"
-            # Kéo về trước khi đẩy để tránh xung đột
+          # Luôn commit vì LAST_UPDATE bên trong prices.js thay đổi mỗi giây
+          if git commit -m "🔄 [Auto] Cập nhật giá vàng - $(TZ='Asia/Ho_Chi_Minh' date '+%H:%M:%S %d/%m/%Y')"; then
             git pull --rebase origin main
             git push origin main
           else
-            echo "Không có thay đổi."
+            echo "Không có thay đổi để cập nhật."
           fi
