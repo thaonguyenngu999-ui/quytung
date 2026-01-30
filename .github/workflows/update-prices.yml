@@ -2,8 +2,8 @@ name: Auto Update Gold Prices
 
 on:
   schedule:
-    # Chạy mỗi 15 phút từ 7h sáng đến 6h chiều (giờ VN = UTC+7)
-    - cron: '*/15 0-11 * * 1-6'  # 7AM-6PM VN, Mon-Sat
+    # Chạy mỗi 15 phút từ 7h sáng đến 11h đêm (giờ VN = UTC+7)
+    - cron: '*/15 0-16 * * *'  # 7AM-11PM VN, Every day
   workflow_dispatch:  # Cho phép chạy thủ công
 
 jobs:
