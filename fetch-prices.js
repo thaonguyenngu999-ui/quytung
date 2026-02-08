@@ -1,6 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const https = require('https');
+
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: false
+});
 
 // Cấu hình
 const CONFIG = {
@@ -47,7 +52,10 @@ let currentPrices = {
 async function fetchExternalAPI() {
     try {
         console.log('📡 Đang gọi API: https://apigold.vercel.app/api/gold-prices ...');
-        const response = await axios.get('https://apigold.vercel.app/api/gold-prices', { timeout: 10000 });
+        const response = await axios.get('https://apigold.vercel.app/api/gold-prices', {
+            timeout: 10000,
+            httpsAgent: httpsAgent
+        });
         const json = response.data;
 
         if (json && json.data) {
@@ -109,7 +117,8 @@ async function scrapeKimTin() {
         console.log('📡 Fetching Kim Tín (Axios/Cheerio)...');
         const response = await axios.get('https://kimtin.vn/bieu-do-gia-vang', {
             headers: { 'User-Agent': CONFIG.userAgent },
-            timeout: 10000
+            timeout: 10000,
+            httpsAgent: httpsAgent
         });
 
         const $ = cheerio.load(response.data);
