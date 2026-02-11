@@ -10,6 +10,11 @@ Crawl-delay: 1
 
 # Allow important files
 Allow: /index.html
+Allow: /gia-vang-quy-tung-hom-nay.html
+Allow: /gia-vang-nhan-tron-quy-tung.html
+Allow: /gia-vang-sjc-quy-tung.html
+Allow: /tiem-vang-quy-tung-thai-nguyen.html
+Allow: /bang-gia-vang-thai-nguyen.html
 Allow: /style.css
 Allow: /prices.js
 Allow: /script.js
@@ -19,3 +24,5 @@ Allow: /logo.png
 Disallow: /scraper.js
 Disallow: /package.json
 Disallow: /node_modules/
+Disallow: /fetch-prices.js
+Disallow: /error.log

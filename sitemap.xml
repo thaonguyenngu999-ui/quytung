@@ -7,9 +7,49 @@
     <!-- Trang chính -->
     <url>
         <loc>https://giavangquytung.com/</loc>
-        <lastmod>2026-02-05</lastmod>
+        <lastmod>2026-02-11</lastmod>
         <changefreq>hourly</changefreq>
         <priority>1.0</priority>
+    </url>
+    
+    <!-- Giá Vàng Quý Tùng Hôm Nay -->
+    <url>
+        <loc>https://giavangquytung.com/gia-vang-quy-tung-hom-nay.html</loc>
+        <lastmod>2026-02-11</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Giá Vàng Nhẫn Tròn Quý Tùng -->
+    <url>
+        <loc>https://giavangquytung.com/gia-vang-nhan-tron-quy-tung.html</loc>
+        <lastmod>2026-02-11</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Giá Vàng SJC Quý Tùng -->
+    <url>
+        <loc>https://giavangquytung.com/gia-vang-sjc-quy-tung.html</loc>
+        <lastmod>2026-02-11</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Tiệm Vàng Quý Tùng Thái Nguyên -->
+    <url>
+        <loc>https://giavangquytung.com/tiem-vang-quy-tung-thai-nguyen.html</loc>
+        <lastmod>2026-02-11</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Bảng Giá Vàng Thái Nguyên -->
+    <url>
+        <loc>https://giavangquytung.com/bang-gia-vang-thai-nguyen.html</loc>
+        <lastmod>2026-02-11</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.8</priority>
     </url>
     
 </urlset>
