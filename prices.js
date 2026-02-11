@@ -3,7 +3,7 @@
 // Nguồn: BTMC, SJC, DOJI + tham khảo Kim Tín
 // ==========================================
 
-const LAST_UPDATE = "14:10 11/02/2026";
+const LAST_UPDATE = "15:01 11/02/2026";
 
 const GOLD_PRICES = {
     "quyTung": {
@@ -18,7 +18,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16682,
-                "sell": 17218
+                "sell": 17318
             },
             {
                 "name": "Nhẫn tròn ép vỉ",
@@ -26,7 +26,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16682,
-                "sell": 17218
+                "sell": 17318
             },
             {
                 "name": "Vàng miếng SJC",
@@ -34,7 +34,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17582,
-                "sell": 18270
+                "sell": 18180
             },
             {
                 "name": "Trang sức 18K",
@@ -58,7 +58,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16702,
-                "sell": 17198
+                "sell": 17298
             },
             {
                 "name": "Nhẫn tròn ép vỉ",
@@ -66,7 +66,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16702,
-                "sell": 17198
+                "sell": 17298
             },
             {
                 "name": "Quà mừng vàng",
@@ -74,7 +74,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16702,
-                "sell": 17198
+                "sell": 17298
             },
             {
                 "name": "Vàng miếng SJC",
@@ -82,7 +82,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17602,
-                "sell": 18250
+                "sell": 18160
             },
             {
                 "name": "Trang sức 18K",
@@ -108,7 +108,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16667,
-                "sell": 17233
+                "sell": 17333
             },
             {
                 "name": "Nhẫn Rồng Phụng",
@@ -124,7 +124,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17567,
-                "sell": 18285
+                "sell": 18195
             }
         ]
     },
@@ -142,7 +142,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17567,
-                "sell": 18285
+                "sell": 18195
             },
             {
                 "name": "Vàng nhẫn SJC 99.99",
@@ -150,7 +150,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16667,
-                "sell": 17233
+                "sell": 17333
             },
             {
                 "name": "Vàng nữ trang 99.99",
@@ -175,7 +175,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17552,
-                "sell": 18300
+                "sell": 18210
             },
             {
                 "name": "Nhẫn tròn PNJ 24K",
@@ -183,7 +183,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16652,
-                "sell": 17248
+                "sell": 17348
             }
         ]
     },
@@ -200,7 +200,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 17552,
-                "sell": 18300
+                "sell": 18210
             },
             {
                 "name": "Nhẫn tròn DOJI",
@@ -208,7 +208,7 @@ const GOLD_PRICES = {
                 "purity": "999.9",
                 "purityLabel": "24K",
                 "buy": 16652,
-                "sell": 17248
+                "sell": 17348
             }
         ]
     }
