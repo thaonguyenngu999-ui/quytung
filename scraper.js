@@ -4,7 +4,7 @@
  * ==========================================
  * 
  * Web Scraping: Lấy dữ liệu giá vàng từ các nguồn uy tín
- * Cron Job: Tự động chạy mỗi 5 phút (Near Realtime Update)
+ * Cron Job: Tự động chạy mỗi 2 tiếng
  * 
  * Nguồn dữ liệu:
  * - BTMC (btmc.vn) - Bảo Tín Minh Châu
@@ -14,7 +14,7 @@
  * 
  * Cách chạy:
  * 1. npm install
- * 2. npm start (chạy cron job mỗi 5 phút)
+ * 2. npm start (chạy cron job mỗi 2 tiếng)
  * 3. npm run scrape (chạy 1 lần để test)
  */
 
@@ -32,8 +32,8 @@ const CONFIG = {
     // Đường dẫn file prices.js để cập nhật
     pricesFile: path.join(__dirname, 'prices.js'),
 
-    // Interval cron job (mỗi 5 phút)
-    cronSchedule: '*/5 * * * *',
+    // Interval cron job (mỗi 2 tiếng)
+    cronSchedule: '0 */2 * * *',
 
     // Timeout cho mỗi request (ms)
     timeout: 30000,
@@ -303,9 +303,9 @@ if (process.argv.includes('--once')) {
             process.exit(1);
         });
 } else {
-    // Chạy cron job mỗi 5 phút
+    // Chạy cron job mỗi 2 tiếng
     console.log('🚀 Khởi động Gold Price Scraper');
-    console.log('⏰ Cron Schedule:', CONFIG.cronSchedule, '(mỗi 5 phút)');
+    console.log('⏰ Cron Schedule:', CONFIG.cronSchedule, '(mỗi 2 tiếng)');
     console.log('📁 Output:', CONFIG.pricesFile);
     console.log('');
 
