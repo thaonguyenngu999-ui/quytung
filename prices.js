@@ -3,7 +3,7 @@
 // Nguồn: BTMC, SJC, DOJI + tham khảo Kim Tín
 // ==========================================
 
-const LAST_UPDATE = "12:02 28/02/2026";
+const LAST_UPDATE = "12:40 28/02/2026";
 
 const GOLD_PRICES = {
     "quyTung": {
